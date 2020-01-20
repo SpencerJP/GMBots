@@ -10,7 +10,7 @@
 	Github Wiki: https://github.com/Noobz4Life/GMBots/wiki
 ]]
 
-
+print("DEBUG, remove print")
 -- Enums
 STATE_IDLE = 1; -- when the map loads, we wait for everyone to join
 STATE_SETUP = 2; -- first few seconds of the round, when everyone can still spawn and damage is disabled
@@ -47,9 +47,9 @@ net.Receive("JB.SendRoundUpdate", function()
 end)
 
 function GetTransmitter() 
-	local getEnt = #ents.GetByClass("jb_transmitter_state")
+	local getEnt = #ents.FindByClass("jb_transmitter_state")
 	if getEnt == 1 then
-		return ents.GetByClass("jb_transmitter_state")[1]
+		return ents.FindByClass("jb_transmitter_state")[1]
 	else
 		return nil
 	end
@@ -57,6 +57,7 @@ end
 
 timer.Create("GMBots_Jailbreak", 1, 0, function() 
 	GMBots_Transmitter = GetTransmitter()
+	print("test timer")
 	if GMBots_Transmitter != nil then
 		timer.Remove("GMBots_Jailbreak")
 	end
@@ -72,7 +73,18 @@ end)
 
 function GMBotsStart(ply,cmd)
 	if not IsValid(JB:GetWarden()) then
-		ply:BotWander()
+		ply:Debug("wander")
+		ply:BotWander(cmd)
+	else
+		local warden = JB:GetWarden()
+		if ply:GetPos():Distance(warden:GetPos()) >= 200 then
+			ply:Debug("follow")
+			ply:BotFollow(cmd, JB:GetWarden())
+		else
+			-- local random ply math.random(1, #player.GetAll())
+
+		end
+		ply:Debug("don't follow")
 	end
 end
 hook.Add("GMBotsStart","GMBotsStart",GMBotsStart) -- This hook is basically StartCommand, but it checks if the player is a bot for you, and also handles errors.
