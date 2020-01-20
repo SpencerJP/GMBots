@@ -96,7 +96,7 @@ end
 concommand.Add("gmbots_bot_add",function(ply)
 	if ( ply and ply:IsValid() and not ply:IsAdmin() ) then return end
 	local name = player.GetGMBotName()
-	local bot = player.CreateGMBot("BOT "..name)
+	local bot = player.CreateGMBot("BOT " .. name)
 	-- It used to be that you had to make your own command, now all you have to do is use this hook to set values.
 	if bot and bot:IsValid() then
 		bot.Bot = true -- This will be used to check if a Player is a Bot or not.
@@ -429,10 +429,8 @@ function plymeta:LookForPlayers(teams)
 				local b = allplayers[i]
 				if b and b:IsPlayer() and b ~= ply and ply:BotVisible(b) then
 					local cont = true
-					if teams then
-						if b:Team() == ply:Team() then
-							cont = false
-						end
+					if teams and b:Team() == ply:Team()  then
+						cont = false
 					end
 					if cont then
 						local dist = b:GetPos():Distance(ply:GetPos() )

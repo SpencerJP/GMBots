@@ -188,6 +188,12 @@ timer.Simple(2,function()
 			MsgC(Color( 0, 255, 64 ),"[GMBots] Hide and Seek Lag: Lags on some maps.\n")
 			GMBots.Success = true
 			include("gmbots/hideandseek.lua")
+		elseif gm_name == "jailbreak" or gm_name == "jail break" then
+			MsgC(Color( 0, 255, 64 ),"[GMBots] This addon supports Jailbreak!\n")
+			MsgC(Color( 0, 255, 64 ),"[GMBots] Jailbreak Support Level: TODOGuards Only\n")
+			MsgC(Color( 0, 255, 64 ),"[GMBots] Jailbreak Lag: TODO\n") 
+			GMBots.Success = true
+			include("gmbots/jailbreak.lua")
 		elseif gm_name == "base" then
 			MsgC(Color( 0, 255, 64 ),"[GMBots] You're... on the base... gamemode... Guess I'll load the base.lua anyways.\n")
 			MsgC(Color( 0, 255, 64 ),"[GMBots] Base Support Level: Awful\n")
@@ -195,17 +201,15 @@ timer.Simple(2,function()
 			GMBots.Success = true
 			include("gmbots/base.lua")
 		else
-			MsgC(Color( 0, 255, 64 ),"[GMBots] GMBots doesn't support this gamemode by default. Looking for lua/gmbots/"..gm_name..".lua\n")
+			MsgC(Color( 0, 255, 64 ), "[GMBots] GMBots doesn't support this gamemode by default. Looking for lua/gmbots/" .. gm_name .. ".lua\n")
 			if file.Exists( "gmbots/"..gm_name..".lua", "LUA" ) then
-				MsgC(Color( 0, 255, 64 ),"[GMBots] Found lua/gmbots/"..gm_name..".lua! Loading...\n")
-				
+				MsgC(Color( 0, 255, 64 ),"[GMBots] Found lua/gmbots/"..gm_name..".lua! Loading...\n")	
 				GMBots.Success = true
-				include("gmbots/"..gm_name..".lua")
+				include("gmbots/" .. gm_name .. ".lua")
 			else
-				MsgC(Color( 0, 255, 64 ),"[GMBots] Failed to find"..gm_name..".lua!\n")
+				MsgC(Color( 0, 255, 64 ), "[GMBots] Failed to find" .. gm_name .. ".lua!\n")
 			end
 		end
-		
 		if (ULib and ULib.bans) then
 			--ULX has some issue where it tries to Authenticate bots as actual players.
 			--[[
@@ -214,7 +218,6 @@ timer.Simple(2,function()
 			   2. fn - addons/ulx-v3_70/lua/ulx/modules/slots.lua:44
 				3. unknown - addons/ulib-v2_60/lua/ulib/shared/hook.lua:110
 			]]
-			
 			--Fix by 
 			hook.Add("PlayerDisconnected", "ulxSlotsDisconnect", function(ply)
 				--If player is bot.
@@ -224,7 +227,7 @@ timer.Simple(2,function()
 				end
 			end)
 		end
-		
+
 		if GMBots.Success then
 			timer.Simple(1,function()
 				GMBots.AddBotCount = GMBots.AddBotCount or 0
@@ -272,8 +275,6 @@ timer.Simple(2,function()
 				end
 			end)
 		end
-	elseif CLIENT then
-
 	end
 end)
 
