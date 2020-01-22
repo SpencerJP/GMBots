@@ -67,6 +67,7 @@ end)
 hook.Add("GMBotsBotAdded","GamemodeBotAdded",function(bot) -- This hook gets ran when a bot is added, from bot quota or the gmbots_bot_add command.
 	if bot and bot:IsValid() then
 		bot:SetTeam(TEAM_GUARD);
+		bot.interestedInPlayer = nil
 	end
 end)
 
@@ -77,12 +78,20 @@ function GMBotsStart(ply,cmd)
 		ply:BotWander(cmd)
 	else
 		local warden = JB:GetWarden()
-		if ply:GetPos():Distance(warden:GetPos()) >= 200 then
+		if ply:GetPos():Distance(warden:GetPos()) >= 300 then
 			ply:Debug("follow")
 			ply:BotFollow(cmd, JB:GetWarden())
 		else
-			-- local random ply math.random(1, #player.GetAll())
-
+			local randNum = math.Rand(1,100)
+			if (randNum == 10) then
+				ply.interestedInPlayer =  player.GetAll()[math.Rand(1, #player.GetAll())]
+			else
+				if (randNum > 95) then
+					ply:QuickWander(cmd)
+				elseif (interestedInPlayer) then
+					ply:LookAtEntity(interestedInPlayer)
+				end
+			end
 		end
 		ply:Debug("don't follow")
 	end

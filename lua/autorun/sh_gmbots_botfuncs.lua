@@ -329,13 +329,34 @@ end
 
 function plymeta:BotWander(cmd)
 	self.WanderSpot = self.WanderSpot or self:GetHidingSpot() or self:GetPos()
-	self.WanderTime = self.WanderTime or CurTime()+math.random(10,30)
+	self.WanderTime = self.WanderTime or CurTime() + math.random(10,30)
 	local dist = self.WanderSpot:Distance(self:GetPos())
 	if dist > 20 then
 		self:Pathfind(cmd,self.WanderSpot,true)
 		self:BotCheckJump(cmd)
 	else
-		self.LBJ = CurTime()+3
+		self.LBJ = CurTime() + 8
+		if not self.WanderReached then
+			self:Debug("Reached wander spot.")
+			self.WanderReached = true
+		end
+	end
+	if CurTime() > self.WanderTime then
+		self.WanderTime = nil
+		self.WanderSpot = nil
+		self.WanderReached = false
+	end
+end
+
+function plymeta:QuickWander(cmd)
+	self.WanderSpot = self.WanderSpot or self:GetHidingSpot() or self:GetPos()
+	self.WanderTime = self.WanderTime or CurTime() + math.random(5,15)
+	local dist = self.WanderSpot:Distance(self:GetPos())
+	if dist > 20 then
+		self:Pathfind(cmd,self.WanderSpot,true)
+		self:BotCheckJump(cmd)
+	else
+		self.LBJ = CurTime() + 8
 		if not self.WanderReached then
 			self:Debug("Reached wander spot.")
 			self.WanderReached = true
@@ -382,6 +403,7 @@ end
 function plymeta:LookAtLerp(cmd,pos,ratio,visualonly)
 	local start = self:EyeAngles()
 	
+				ply:QuickWander(cmd)
 	local eyepos = self:EyePos()
 	
 	local endang = (pos - eyepos):Angle()
