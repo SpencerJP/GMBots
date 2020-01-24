@@ -21,6 +21,8 @@ BOTNames = {"Splerge", "REL", "Freaky", "Lebofly", "Gregory", "Alfred", "Garry",
 GMBots_Transmitter = nil
 GMBots_CurrentWarden = nil
 GMBots_HostilePlayers = {}
+GMBots_ACCURACY_PENALTY = 2 -- higher values are more inaccurate
+GMBots_ENABLE_INACCURACY = true
 
 -- ent.GetRebel and ent:GetRebel()
 net.Receive("JB.SendRoundUpdate", function()
@@ -57,13 +59,12 @@ hook.Add("DropWeapon", "GMBots_CheckIfPlayerHasThrownAwayWeapon", function(weap,
     local amountOfWeaps = #ply:GetWeapons()
 
     if ((amountOfWeaps == 1 or (amountOfWeaps == 2 and ply:HasWeapon("weapon_jb_knife"))) and not ply:GetRebel()) then
-        GMBots_HostilePlayers[ply] = false
+        GMBots_HostilePlayers[ply] = nil
     end
 end)
 
 timer.Create("GMBots_Jailbreak", 1, 0, function()
     GMBots_Transmitter = GetTransmitter()
-    print("test timer")
 
     if GMBots_Transmitter ~= nil then
         timer.Remove("GMBots_Jailbreak")
@@ -74,11 +75,39 @@ end)
 hook.Add("GMBotsBotAdded", "GamemodeBotAdded", function(bot)
     if bot and bot:IsValid() then
         bot:SetTeam(TEAM_GUARD)
+        bot:Give("bb_ak47")
+        bot:SelectWeapon("bb_ak47")
         bot.interestedInPlayer = nil
     end
 end)
 
 function GMBotsStart(ply, cmd)
+    if (ply.currentTarget) then
+        if ply.currentTarget[2] >= CurTime() then
+            ply.currentTarget[2] = ply.currentTarget[2] + 10
+        elseif ply:BotVisible(currentTarget[1]) then
+            if (GMBots_ENABLE_INACCURACY) then
+                local xoff = math.random(-GMBots_ACCURACY_PENALTY, GMBots_ACCURACY_PENALTY)
+                local yoff = math.random(-GMBots_ACCURACY_PENALTY, GMBots_ACCURACY_PENALTY)
+                local zoff = math.random(-GMBots_ACCURACY_PENALTY, GMBots_ACCURACY_PENALTY)
+                local offset = Vector(xoff, yoff, zoff)
+                ply:BotFollow(cmd, ply.Target)
+                ply:BotAttack(cmd, ply.Target, offset, true)
+            else
+                ply:BotFollow(cmd, ply.Target)
+                ply:BotAttack(cmd, ply.Target)
+            end
+        else
+            ply.currentTarget = nil
+        end
+    end
+
+    for k, v in GMBots_HostilePlayers do
+        if ply:BotVisible(k) then
+            ply.currentTarget = {k, CurTime() + 10}
+        end
+    end
+
     if not IsValid(JB:GetWarden()) then
         ply:Debug("wander")
         ply:BotWander(cmd)
