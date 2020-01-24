@@ -43,9 +43,21 @@ function GetTransmitter()
     end
 end
 
-hook.Add("WeaponEquip", "CheckIfPlayerIsInPossessionOfWeapon", function(weap, ply)
-    if (weap ~= "weapon_jb_fists" and weap ~= "weapon_jb_knife") then
+hook.Add("AddRebelStatus", "GMBots_AddRebellingPlayersAsHostile", function(ply)
+    GMBots_HostilePlayers[ply] = true
+end)
+
+hook.Add("WeaponEquip", "GMBots_CheckIfPlayerIsInPossessionOfWeapon", function(weap, ply)
+    if (weap:GetName() ~= "weapon_jb_fists" and weapon:GetName() ~= "weapon_jb_knife") then
         GMBots_HostilePlayers[ply] = true
+    end
+end)
+
+hook.Add("DropWeapon", "GMBots_CheckIfPlayerHasThrownAwayWeapon", function(weap, ply)
+    local amountOfWeaps = #ply:GetWeapons()
+
+    if ((amountOfWeaps == 1 or (amountOfWeaps == 2 and ply:HasWeapon("weapon_jb_knife"))) and not ply:GetRebel()) then
+        GMBots_HostilePlayers[ply] = false
     end
 end)
 
