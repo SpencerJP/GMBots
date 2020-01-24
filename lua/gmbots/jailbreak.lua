@@ -83,7 +83,7 @@ end)
 
 function GMBotsStart(ply, cmd)
     if (ply.currentTarget) then
-        if ply.currentTarget[2] >= CurTime() then
+        if ply.currentTarget[2] >= CurTime() and ply:BotVisible(currentTarget[1]) then
             ply.currentTarget[2] = ply.currentTarget[2] + 10
         elseif ply:BotVisible(currentTarget[1]) then
             if (GMBots_ENABLE_INACCURACY) then
